@@ -2,7 +2,7 @@ import cv2
 import mediapipe as mp
 from moviepy.editor import VideoFileClip
 
-def process_video(cap, heigh, TotalFrame):
+def process_video(cap, height, TotalFrame):
     framelist, RAnklePosY, LAnklePosY = [], [], []
 
     with mp_pose.Pose(
