@@ -39,7 +39,6 @@ def main():
     slice(clip, Kslice_frame, TotalFrame, folderpath)
 
     cap.release()
-    clip.close()
 
 if __name__ == "__main__":
     main()

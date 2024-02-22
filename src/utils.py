@@ -2,6 +2,10 @@ import cv2
 import mediapipe as mp
 from moviepy.editor import VideoFileClip
 
+mp_drawing = mp.solutions.drawing_utils
+mp_drawing_styles = mp.solutions.drawing_styles
+mp_pose = mp.solutions.pose
+
 # 可合併？
 def front_view(cap, height, TotalFrame):
     framelist, RAnklePosY, LAnklePosY = [], [], []
@@ -78,7 +82,7 @@ def side_view(cap, width, TotalFrane):
 
 def smoothing(framelist, RAnklePos, LAnklePos, Amp = 30): #front: Y, side: X
     RAm, LAm = [], []
-    Rcal, Lcal = [], []
+    Rcal, Lcal = 0, 0
     for i in range(Amp):
         Rcal = Rcal + RAnklePos[i]
         Lcal = Lcal + LAnklePos[i]
@@ -262,7 +266,7 @@ def slice(clip, Kslice_frame, TotalFrame, folderpath):
             end_frame = start_frame + 85
         else:
             end_frame = TotalFrame
-    start_time = start_frame / fps
-    end_time = end_frame / fps
-    clip.subclip(start_time, end_time).write_videofile(folderpath + f'{n}.mp4')
-    n+=1
+        start_time = start_frame / fps
+        end_time = end_frame / fps
+        clip.subclip(start_time, end_time).write_videofile(folderpath + f'{n}.mp4')
+        n+=1
