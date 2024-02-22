@@ -6,7 +6,6 @@ mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_pose = mp.solutions.pose
 
-# 可合併？
 def front_view(cap, height, TotalFrame):
     framelist, RAnklePosY, LAnklePosY = [], [], []
 
@@ -40,7 +39,7 @@ def front_view(cap, height, TotalFrame):
     cap.release()
     return framelist, RAnklePosY, LAnklePosY
 
-def side_view(cap, width, TotalFrane):
+def side_view(cap, width, TotalFrame):
     framelist, RAnklePosX, LAnklePosX = [], [], []
 
     with mp_pose.Pose(
@@ -59,14 +58,14 @@ def side_view(cap, width, TotalFrane):
             frame = cap.get(cv2.CAP_PROP_POS_FRAMES)
             framelist.append(frame)
             if int(frame) == 1 and results.pose_landmarks:
-                firstX = width - results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_ANKLE].x * width #以右邊界為0
+                firstX = width - results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_ANKLE].x * width # make the right edge to 0
             else:
-                firstX = 5000 #使默認左邊為0
+                firstX = 5000 # make the left edge to 0
             if firstX < 2500 and results.pose_landmarks:
-                LankleX = width - results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_ANKLE].x * width #以右邊界為0
+                LankleX = width - results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_ANKLE].x * width # make the right edge to 0
                 RankleX = width - results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_ANKLE].x * width
             elif results.pose_landmarks:
-                LankleX = results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_ANKLE].x * width #以左邊界為0
+                LankleX = results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_ANKLE].x * width # make the left edge to 0
                 RankleX = results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_ANKLE].x * width
             else:
                 LankleX = 0
@@ -97,41 +96,6 @@ def smoothing(framelist, RAnklePos, LAnklePos, Amp = 30): #front: Y, side: X
     Am_framelist = framelist[Amp:]
     return RAm, LAm, Am_framelist
 
-# 以下兩者可合併為上
-# def front_smoothing(framelist, RAnklePosY, LAnklePosY, Amp = 30):
-#     RAm_Y, LAm_Y = [], []
-#     Rcal_Y, Lcal_Y = 0, 0
-#     for i in range(Amp):
-#         Rcal_Y = Rcal_Y + RAnklePosY[i]
-#         Lcal_Y = Lcal_Y + LAnklePosY[i]
-#     for i in range(Amp, len(RAnklePosY)):
-#         RAm_Y.append(Rcal_Y / Amp)
-#         LAm_Y.append(Lcal_Y / Amp)
-#         Rcal_Y = Rcal_Y - RAnklePosY[i-Amp]
-#         Rcal_Y = Rcal_Y + RAnklePosY[i]
-#         Lcal_Y = Lcal_Y - LAnklePosY[i-Amp]
-#         Lcal_Y = Lcal_Y + LAnklePosY[i]
-
-#     Am_framelist = framelist[Amp:]
-#     return RAm_Y, LAm_Y, Am_framelist
-
-# def side_smoothing(framelist, RAnklePosX, LAnklePosX, Amp = 30):
-#     LAm_X, RAm_X = [], []   
-#     Lcal_X, Rcal_X = 0, 0
-#     for i in range(Amp):
-#         Lcal_X = Lcal_X + LAnklePosX[i]
-#         Rcal_X = Rcal_X + RAnklePosX[i]
-#     for i in range(Amp, len(LAnklePosX)):
-#         LAm_X.append(Lcal_X / Amp)
-#         RAm_X.append(Rcal_X / Amp)
-#         Lcal_X = Lcal_X - LAnklePosX[i-Amp]
-#         Lcal_X = Lcal_X + LAnklePosX[i]
-#         Rcal_X = Rcal_X - RAnklePosX[i-Amp]
-#         Rcal_X = Rcal_X + RAnklePosX[i]
-
-#     Am_framelist = framelist[Amp:]
-#     return RAm_X, LAm_X, Am_framelist
-
 
 def calculate_slope(RAm, LAm, Am_framelist): #front: Y, side: X
     Ld_list, Rd_list = [0], [0]
@@ -141,15 +105,6 @@ def calculate_slope(RAm, LAm, Am_framelist): #front: Y, side: X
         Rd_list.append(Rd)
         Ld_list.append(Ld)
     return Ld_list, Rd_list
-
-# side view:
-# Ldx_list = [0]
-# Rdx_list = [0]
-# for i in range(1,len(Am_framelist)):
-#     Rdx = RAm_X[i]-RAm_X[i-1]
-#     Ldx = LAm_X[i]-LAm_X[i-1]
-#     Rdx_list.append(Rdx)
-#     Ldx_list.append(Ldx)
 
 def front_takeoff(Rdy_list, Ldy_list, Am_framelist):
     Rslice_frame, Lslice_frame, Kslice_frame = [], [], []
