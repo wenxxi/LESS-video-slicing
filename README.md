@@ -10,6 +10,7 @@ This tool is designed to streamline the process of extracting specific segments 
 git clone https://github.com/wenxxi/LESS-video-slicing.git
 ```
 ## Command
+Choose "F" for a front view video and "S" for a side view video.
 ```
 python less.py /path/to/video.mp4 {F,S} /path/to/output/
 ```
